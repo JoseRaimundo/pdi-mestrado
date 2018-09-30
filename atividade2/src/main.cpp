@@ -18,7 +18,7 @@ int main(int argc, char const *argv[]){
      return -1;
     }
 
-    Mat image, saida;
+    Mat image, saida, gray;
     image = imread(argv[1], CV_LOAD_IMAGE_COLOR);  
 
     if(! image.data )  {
@@ -28,42 +28,43 @@ int main(int argc, char const *argv[]){
 	
 	int img_origin[image.rows][image.cols];
 
-	saida = Mat(image.rows, image.cols,CV_8UC3);
+	saida = Mat(image.rows, image.cols, CV_8UC3);
+	gray = Mat(image.rows, image.cols, 0);  
 
 	uint8_t *origin 	= (uint8_t*)image.data;
 	uint8_t *destino 	= (uint8_t*)saida.data;
+	uint8_t *cinza 		= 	(uint8_t*)gray.data;
+	//cvtColor(image, gray, CV_BGR2GRAY);
 
+	int cont = 0;
 	
 	for(int i = 0; i < image.rows; i++){
 		for(int j = 0; j < image.cols; j++){
+			//blue
+			//destino[i*saida.cols*image.channels() + j*image.channels() + 0] = origin[i*image.cols*image.channels() + j*image.channels() + 0];
+			//green
 			//destino[i*saida.cols*image.channels() + j*image.channels() + 1] = origin[i*image.cols*image.channels() + j*image.channels() + 1];
-			//red 2
-			// destino[i+image.rows * image.channels() + j+image.cols* image.channels()] = (uint8_t)origin[i+image.rows * image.channels() + j+image.cols* image.channels()];
-			// avg[0] += origin[k*frame.cols*channels + l*channels]; 
-			// avg[1] += origin[k*frame.cols*channels + l*channels + 1];
-			// avg[2] += origin[k*frame.cols*channels + l*channels + 2];
-
-	//					destino[i*saida.cols*image.channels() + j*image.channels()] = origin[i*image.cols*image.channels() + j*image.channels() + 2];
-			int saida = 
-			 0.2125 * origin[i*image.cols*image.channels() + j*image.channels() + 2] 	+
-			 0.7154 * origin[i*image.cols*image.channels() + j*image.channels() + 1] +
-			 0.0732 * origin[i*image.cols*image.channels() + j*image.channels() + 0];
-			cout << saida << endl;;
-		 
+			//red
+			//destino[i*saida.cols*image.channels() + j*image.channels() + 2] = origin[i*image.cols*image.channels() + j*image.channels() + 2];
+			//Y ← 0.299⋅R+0.587⋅G+0.114⋅B valores sugeridos pelo opencv
+	        int chave	  =  	0.2125 * origin[i*image.cols*image.channels() + j*image.channels() + 2] +
+								0.7154 * origin[i*image.cols*image.channels() + j*image.channels() + 1] +
+								0.0732 * origin[i*image.cols*image.channels() + j*image.channels() + 0];
+			
+			if (chave > 25) {
+				cinza[cont++] = 255;
+			}else{
+				cinza[cont++] = 0;
+			}
+						
 		}
 	}
 
     // namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
-    // imshow( "Display window", saida );                   // Show our image inside it.
+  //   imshow( "Display window", saida );                   // Show our image inside it.
 
     
-	imwrite( "saida1.jpg", saida );
-	waitKey(0);                                          // Wait for a keystroke in the window
-
-
-    return 0;
-
-
-    
+	imwrite( "saida1.jpg", gray );
+	waitKey(0);                                          // Wait for a keystroke in the window    
 	return 0;
 }
