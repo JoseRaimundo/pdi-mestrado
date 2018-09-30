@@ -36,11 +36,19 @@ int main(int argc, char const *argv[]){
 	
 	for(int i = 0; i < image.rows; i++){
 		for(int j = 0; j < image.cols; j++){
-			destino[i*saida.cols*image.channels() + j*image.channels() + 2] = origin[i*image.cols*image.channels() + j*image.channels() + 2];
+			//destino[i*saida.cols*image.channels() + j*image.channels() + 1] = origin[i*image.cols*image.channels() + j*image.channels() + 1];
+			//red 2
 			// destino[i+image.rows * image.channels() + j+image.cols* image.channels()] = (uint8_t)origin[i+image.rows * image.channels() + j+image.cols* image.channels()];
 			// avg[0] += origin[k*frame.cols*channels + l*channels]; 
 			// avg[1] += origin[k*frame.cols*channels + l*channels + 1];
 			// avg[2] += origin[k*frame.cols*channels + l*channels + 2];
+
+	//					destino[i*saida.cols*image.channels() + j*image.channels()] = origin[i*image.cols*image.channels() + j*image.channels() + 2];
+			int saida = 
+			 0.2125 * origin[i*image.cols*image.channels() + j*image.channels() + 2] 	+
+			 0.7154 * origin[i*image.cols*image.channels() + j*image.channels() + 1] +
+			 0.0732 * origin[i*image.cols*image.channels() + j*image.channels() + 0];
+			cout << saida << endl;;
 		 
 		}
 	}
@@ -49,7 +57,7 @@ int main(int argc, char const *argv[]){
     // imshow( "Display window", saida );                   // Show our image inside it.
 
     
-	imwrite( "saida3.jpg", saida );
+	imwrite( "saida1.jpg", saida );
 	waitKey(0);                                          // Wait for a keystroke in the window
 
 
