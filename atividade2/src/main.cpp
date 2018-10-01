@@ -18,53 +18,64 @@ int main(int argc, char const *argv[]){
      return -1;
     }
 
-    Mat image, saida, gray;
-    image = imread(argv[1], CV_LOAD_IMAGE_COLOR);  
+    Mat src;
+    src = imread(argv[1], CV_LOAD_IMAGE_COLOR);  
 
-    if(! image.data )  {
-        cout <<  "Could not open or find the image" << std::endl ;
-        return -1;
-    }
+	if(src.empty())
+		cerr << "Error: Loading image" << endl;
 	
-	int img_origin[image.rows][image.cols];
-
-	saida = Mat(image.rows, image.cols, CV_8UC3);
-	gray = Mat(image.rows, image.cols, 0);  
-
-	uint8_t *origin 	= (uint8_t*)image.data;
-	uint8_t *destino 	= (uint8_t*)saida.data;
-	uint8_t *cinza 		= 	(uint8_t*)gray.data;
-	//cvtColor(image, gray, CV_BGR2GRAY);
-
-	int cont = 0;
+	Mat hsi(src.rows, src.cols, src.type());
+	unsigned char *input = (unsigned char*)(src.data);
 	
-	for(int i = 0; i < image.rows; i++){
-		for(int j = 0; j < image.cols; j++){
-			//blue
-			//destino[i*saida.cols*image.channels() + j*image.channels() + 0] = origin[i*image.cols*image.channels() + j*image.channels() + 0];
-			//green
-			//destino[i*saida.cols*image.channels() + j*image.channels() + 1] = origin[i*image.cols*image.channels() + j*image.channels() + 1];
-			//red
-			//destino[i*saida.cols*image.channels() + j*image.channels() + 2] = origin[i*image.cols*image.channels() + j*image.channels() + 2];
-			//Y ← 0.299⋅R+0.587⋅G+0.114⋅B valores sugeridos pelo opencv
-	        int chave	  =  	0.2125 * origin[i*image.cols*image.channels() + j*image.channels() + 2] +
-								0.7154 * origin[i*image.cols*image.channels() + j*image.channels() + 1] +
-								0.0732 * origin[i*image.cols*image.channels() + j*image.channels() + 0];
-			
-			if (chave > 25) {
-				cinza[cont++] = 255;
-			}else{
-				cinza[cont++] = 0;
+
+	float r, g, b, h, s, in;
+
+	for(int i = 0; i < src.rows; i++)
+	{
+		for(int j = 0; j < src.cols; j++)
+		{
+			b = src.at<Vec3b>(i, j)[0];
+			g = src.at<Vec3b>(i, j)[1];
+			r = src.at<Vec3b>(i, j)[2];
+
+			in = (b + g + r) / 3;
+
+			int min_val = 0;
+			min_val = std::min(r, std::min(b,g));
+
+			s = 1 - 3*(min_val/(b + g + r));
+			if(s < 0.00001)
+			{
+					s = 0;
+			}else if(s > 0.99999){
+					s = 1;
 			}
-						
+
+			if(s != 0)
+			{
+				h = 0.5 * ((r - g) + (r - b)) / sqrt(((r - g)*(r - g)) + ((r - b)*(g - b)));
+				h = acos(h);
+
+				if(b <= g)
+				{
+					h = h;
+				} else{
+					h = ((360 * 3.14159265) / 180.0) - h;
+				}
+			}
+
+			hsi.at<Vec3b>(i, j)[0] = (h * 180) / 3.14159265;
+			hsi.at<Vec3b>(i, j)[1] = s*100;
+			hsi.at<Vec3b>(i, j)[2] = in;
 		}
 	}
 
-    // namedWindow( "Display window", WINDOW_AUTOSIZE );// Create a window for display.
-  //   imshow( "Display window", saida );                   // Show our image inside it.
+	namedWindow("RGB image", CV_WINDOW_AUTOSIZE);
+	namedWindow("HSI image", CV_WINDOW_AUTOSIZE);
 
-    
-	imwrite( "saida1.jpg", gray );
-	waitKey(0);                                          // Wait for a keystroke in the window    
+	imshow("RGB image", src);
+	imshow("HSI image", hsi);
+
+	waitKey(0);
 	return 0;
 }
