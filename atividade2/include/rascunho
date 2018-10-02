@@ -25,9 +25,6 @@ int main(int argc, char const *argv[]){
         cout <<  "Could not open or find the image" << std::endl ;
         return -1;
     }
-	
-	int img_origin[image.rows][image.cols];
-
 	saida = Mat(image.rows, image.cols, CV_8UC3);
 	gray = Mat(image.rows, image.cols, 0);  
 
