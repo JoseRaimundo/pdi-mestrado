@@ -1,6 +1,10 @@
+metricas/bin
+metricas/src/*.o
 atividade2/bin
 atividade2/src/*.o
 atividade3/bin
 atividade3/src/*.o
+atividade4/bin
+atividade4/src/*.o
 atividade4/bin
 atividade4/src/*.o
