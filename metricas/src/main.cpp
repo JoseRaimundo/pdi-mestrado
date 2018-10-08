@@ -103,7 +103,13 @@ int main(int argc, char const *argv[]){
 
     Mat src, eva;
     src = imread(argv[1], CV_LOAD_IMAGE_COLOR);  
-	eva = imread(argv[2], CV_LOAD_IMAGE_COLOR);  
+
+    if (argc == 2) {
+        cout << "SI:   " <<calcSI(src) <<endl;
+        return 0;
+    }
+    eva = imread(argv[2], CV_LOAD_IMAGE_COLOR);  
+    
 
     if(! src.data )  {
         cout <<  "Could not open or find the image" << std::endl ;

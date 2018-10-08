@@ -5,27 +5,12 @@
 #include <string>
 #include <sstream>
 
-#define MAX_BIT 8
+#define MAX_BIT 5
 
 using namespace std;
 
-int main(int argc, char const *argv[]){
-	
-	if( argc < 2)  {
-     cout <<" Usage: display_image ImageToLoadAndDisplay" << endl;
-     return -1;
-    }
 
-    Mat src;
-	
-    src = imread(argv[1], CV_LOAD_IMAGE_COLOR);  
-
-    if(! src.data )  {
-        cout <<  "Could not open or find the image" << std::endl ;
-        return -1;
-    }
-
-	//carregando camadas
+void getLayers(cv::Mat& src){
 	vector<Mat> layers;
 	vector<uint8_t*> destiny;
 	
@@ -65,11 +50,87 @@ int main(int argc, char const *argv[]){
 	for(size_t i = 0; i < MAX_BIT; i++)	{
 		string nome = "";
 		std::stringstream sstm;
-		sstm << "Janela" << i;
+		sstm << "Janela" << i << ".jpeg";
 		nome = sstm.str();
-
-		imshow( nome, layers[i] );
+		imwrite( nome, layers[i] );
+		// imshow( nome, layers[i] );
 	}
+}
+
+int main(int argc, char const *argv[]){
+
+	
+	if( argc < 2)  {
+     cout <<" Usage: display_image ImageToLoadAndDisplay" << endl;
+     return -1;
+    }
+
+    Mat src1 = imread(argv[1], CV_LOAD_IMAGE_COLOR);  
+	Mat src2 = imread(argv[2], CV_LOAD_IMAGE_COLOR);  
+
+    if(!src1.data )  {
+        cout <<  "Could not open or find the image" << std::endl ;
+        return -1;
+    }
+	int layers = 0;
+	cin >> layers;
+
+	Mat output = Mat(src1.rows, src1.cols, CV_8UC3);
+	//separa as camadas de bits
+	// getLayers(src);
+
+ 	uint8_t *origin1 	= (uint8_t*)src1.data;
+	uint8_t *origin2 	= (uint8_t*)src2.data;
+	uint8_t *destiny 	= (uint8_t*)output.data;
+	
+	bitset<8> byte_in_r1, byte_in_g1, byte_in_b1, 
+			  byte_in_r2, byte_in_g2, byte_in_b2, 
+			  byte_out_r,byte_out_g,byte_out_b ;
+
+	for(int i = 0; i < src1.rows; i++){
+		for(int j = 0; j < src1.cols; j++){
+			byte_in_b1 = origin1[i*src1.cols*src1.channels() + j*src1.channels() + 0];
+			byte_in_g1 = origin1[i*src1.cols*src1.channels() + j*src1.channels() + 1];
+			byte_in_r1 = origin1[i*src1.cols*src1.channels() + j*src1.channels() + 2];
+			byte_in_b2 = origin2[i*src2.cols*src2.channels() + j*src2.channels() + 0];
+			byte_in_g2 = origin2[i*src2.cols*src2.channels() + j*src2.channels() + 1];
+			byte_in_r2 = origin2[i*src2.cols*src2.channels() + j*src2.channels() + 2];	
+
+			byte_out_r.reset();
+			byte_out_g.reset();
+			byte_out_b.reset();
+
+			int current_bit = 0;
+			for(int k = 0; k < layers; k++){
+				byte_out_r[current_bit] = byte_in_r1[k];
+				byte_out_g[current_bit] = byte_in_g1[k];
+				byte_out_b[current_bit] = byte_in_b1[k];
+				current_bit++;
+			}
+
+			for(int k = 0; k < (8 - layers); k++){
+				byte_out_r[current_bit] = byte_in_r2[k];
+				byte_out_g[current_bit] = byte_in_g2[k];
+				byte_out_b[current_bit] = byte_in_b2[k];
+				current_bit++;
+			}
+
+			destiny[i *output.cols*src1.channels() + j*src1.channels() + 0] = byte_out_b.to_ulong();
+			destiny[i *output.cols*src1.channels() + j*src1.channels() + 1] = byte_out_g.to_ulong();
+			destiny[i *output.cols*src1.channels() + j*src1.channels() + 2] = byte_out_r.to_ulong();
+			
+		}
+	}
+
+	
+
+	//imshow( "saida", output);
+	
+	string nome = "";
+	std::stringstream sstm;
+	sstm << "Janela" << layers << ".jpeg";
+	nome = sstm.str();
+	imwrite( nome, output);
 	
 	waitKey(0);     
 	return 0;

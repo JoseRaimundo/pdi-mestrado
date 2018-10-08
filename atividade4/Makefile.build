@@ -38,7 +38,7 @@ install:
 #	@rm $(INSTALL_PATH)/lib/lib$(COMPONENT)-$(VERSION).so $(INSTALL_PATH)/lib/lib$(COMPONENT).so && \
                 echo " $(OK)" || (echo " $(FAILED)"; exit 1;)
 clean:
-	$(RM) *.y4m
+	$(RM) *.jpeg
 	@echo -n Limpando ...
 	@rm -rf $(addprefix $(SRCDIR),$(OBJS)) $(BINDIR) 2> /dev/null && \
                 echo " $(OK)" || (echo " $(FAILED)"; exit 1;) 
