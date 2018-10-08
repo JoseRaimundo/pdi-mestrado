@@ -12,8 +12,8 @@ from numpy.lib.stride_tricks import as_strided as ast
 import math
 import cv2
 
-ref_file = "Janela0.jpeg"
-dist_file = "Janela3.jpeg"
+ref_file = "Janela8.jpeg"
+dist_file = "Janela0.jpeg"
 
 ref = scipy.misc.imread(ref_file, flatten=True).astype(numpy.float32)
 dist = scipy.misc.imread(dist_file, flatten=True).astype(numpy.float32)
@@ -50,6 +50,6 @@ def ssim_exact(img1, img2, sd=1.5, C1=0.01**2, C2=0.03**2):
 
 
 d=psnr(original,contrast)
-print(d)
+print('{:.3f}'.format(d))
 ss = ssim_exact(ref/255, dist/255)
-print(ss)
+print('{:.3f}'.format(ss))
