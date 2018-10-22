@@ -46,6 +46,7 @@ int main( int argc, char** argv ){
 	Mat src = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE); 
     Mat output = Mat(src.rows, src.cols, CV_8UC3);  
     float gamma_value = atof(argv[3]);
+    int version = atoi(argv[4]);
 
     if(!src.data )  {
         cout <<  "Could not open or find the image" << std::endl ;
@@ -58,7 +59,7 @@ int main( int argc, char** argv ){
 
     string nome = "";
 	std::stringstream sstm;
-	sstm << "GammaCorrection" << gamma_value << ".tif";
+	sstm << "GammaCorrection" << version << ".tif";
 	nome = sstm.str();
 	imwrite( nome, output);
     return 0;
