@@ -19,12 +19,15 @@ void GammaCorrection(Mat& src, Mat& dst, float fGamma){
     const int channels = dst.channels();
     switch (channels){
         case 1:  {
+            cout <<"Entrou aqui 1" << endl;
             MatIterator_<uchar> it, end;
             for (it = dst.begin<uchar>(), end = dst.end<uchar>(); it != end; it++)
             *it = lut[(*it)];
             break;
         }
         case 3:   {
+                        cout <<"Entrou aqui 2" << endl;
+
             MatIterator_<Vec3b> it, end;
                 for (it = dst.begin<Vec3b>(), end = dst.end<Vec3b>(); it != end; it++)   {
                     (*it)[0] = lut[((*it)[0])];
@@ -36,6 +39,8 @@ void GammaCorrection(Mat& src, Mat& dst, float fGamma){
     }
 }
 
+
+
 int main( int argc, char** argv ){
 
     if( argc < 2)  {
@@ -43,10 +48,10 @@ int main( int argc, char** argv ){
      return -1;
     }
 
-	Mat src = imread(argv[1], CV_LOAD_IMAGE_GRAYSCALE); 
-    Mat output = Mat(src.rows, src.cols, CV_8UC3);  
-    float gamma_value = atof(argv[3]);
-    int version = atoi(argv[4]);
+	Mat src = imread(argv[1], CV_LOAD_IMAGE_COLOR); 
+    Mat output = Mat(src.rows, src.cols, CV_LOAD_IMAGE_GRAYSCALE);  
+    float gamma_value = atof(argv[2]);
+    int version = atoi(argv[3]);
 
     if(!src.data )  {
         cout <<  "Could not open or find the image" << std::endl ;
@@ -59,7 +64,7 @@ int main( int argc, char** argv ){
 
     string nome = "";
 	std::stringstream sstm;
-	sstm << "GammaCorrection" << version << ".tif";
+	sstm << "GammaCorrection" << version << ".jpeg";
 	nome = sstm.str();
 	imwrite( nome, output);
     return 0;
