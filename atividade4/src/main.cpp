@@ -19,15 +19,12 @@ void GammaCorrection(Mat& src, Mat& dst, float fGamma){
     const int channels = dst.channels();
     switch (channels){
         case 1:  {
-            cout <<"Entrou aqui 1" << endl;
             MatIterator_<uchar> it, end;
             for (it = dst.begin<uchar>(), end = dst.end<uchar>(); it != end; it++)
             *it = lut[(*it)];
             break;
         }
         case 3:   {
-                        cout <<"Entrou aqui 2" << endl;
-
             MatIterator_<Vec3b> it, end;
                 for (it = dst.begin<Vec3b>(), end = dst.end<Vec3b>(); it != end; it++)   {
                     (*it)[0] = lut[((*it)[0])];
@@ -37,6 +34,7 @@ void GammaCorrection(Mat& src, Mat& dst, float fGamma){
             break;
         }
     }
+
 }
 
 
@@ -48,24 +46,33 @@ int main( int argc, char** argv ){
      return -1;
     }
 
-	Mat src = imread(argv[1], CV_LOAD_IMAGE_COLOR); 
-    Mat output = Mat(src.rows, src.cols, CV_LOAD_IMAGE_GRAYSCALE);  
-    float gamma_value = atof(argv[2]);
-    int version = atoi(argv[3]);
+    int gamma_qtd = 11;
 
-    if(!src.data )  {
-        cout <<  "Could not open or find the image" << std::endl ;
-        return -1;
+    float gamma_value[gamma_qtd] = {0.04, 0.1, 0.2, 0.4, 0.67, 1.0, 1.5, 2.5, 5.0, 10.0, 25.0};
+
+    for(int i = 0; i < gamma_qtd; i++)  {
+
+        Mat src = imread(argv[1], CV_LOAD_IMAGE_COLOR); 
+        Mat output = Mat(src.rows, src.cols, CV_LOAD_IMAGE_GRAYSCALE);  
+
+
+        if(!src.data )  {
+            cout <<  "Could not open or find the image" << std::endl ;
+            return -1;
+        }
+
+        GammaCorrection(src, output, gamma_value[i]);
+
+        // imwrite("linear_transform_correction.tif", src);
+
+        string nome = "";
+        std::stringstream sstm;
+        sstm << "GammaCorrection" << i << ".jpeg";
+        nome = sstm.str();
+        imwrite( nome, output);
+        cout << "Imagem: " << nome << " Gamma: " << gamma_value[i] << endl;
     }
-
-    GammaCorrection(src, output, gamma_value);
-
-    // imwrite("linear_transform_correction.tif", src);
-
-    string nome = "";
-	std::stringstream sstm;
-	sstm << "GammaCorrection" << version << ".jpeg";
-	nome = sstm.str();
-	imwrite( nome, output);
+    
+    
     return 0;
 }
