@@ -27,42 +27,53 @@ void getRed(Mat &src, Mat &output){
  
 int main()
 {
-  Mat src, gray, red, green;
+  Mat src, destiny, red, green;
+
 
   src = imread( "teste.jpg", 1 );//resize(src,src,Size(640,480));
-  cvtColor( src, gray, CV_BGR2GRAY );
+  cvtColor( src, destiny, CV_BGR2GRAY );
   cvtColor( src, red, CV_BGR2GRAY );
 
-  getRed(src, gray);
+  Mat cdst;
+ Canny(src, destiny, 50, 200, 3);
+ cvtColor(destiny, cdst, CV_GRAY2BGR);
+
+  // getRed(src, destiny);
  
   // Reduce the noise so we avoid false circle detection
-  GaussianBlur( gray, gray, Size(9, 9), 2, 2 );
+  // GaussianBlur( destiny, destiny, Size(9, 9), 2, 2 );
  
   vector<Vec3f> circles;
  
   // Apply the Hough Transform to find the circles
-  HoughCircles( gray, circles, CV_HOUGH_GRADIENT, 1, 50, 20, 50, 0, 0 );
+  HoughCircles( destiny, circles, CV_HOUGH_GRADIENT, 1, 50, 20, 50, 0, 0 );
  
   // Draw the circles detected
-  for( size_t i = 0; i < circles.size(); i++ )
+  // for( size_t i = 0; i < circles.size(); i++ )
+  // {
+  //     Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+  //     int radius = cvRound(circles[i][2]);     
+  //     circle( src, center, 3, Scalar(0,255,0), -1, 8, 0 );// circle center     
+  //     circle( src, center, radius, Scalar(0,0,255), 3, 8, 0 );// circle outline
+  //     cout << "center : " << center << "\nradius : " << radius << endl;
+  //  }
+
+  vector<Vec4i> lines;
+  HoughLinesP(destiny, lines, 1, CV_PI/180, 50, 50, 10 );
+  for( size_t i = 0; i < lines.size(); i++ )
   {
-      Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
-      int radius = cvRound(circles[i][2]);     
-      circle( src, center, 3, Scalar(0,255,0), -1, 8, 0 );// circle center     
-      circle( src, center, radius, Scalar(0,0,255), 3, 8, 0 );// circle outline
-      cout << "center : " << center << "\nradius : " << radius << endl;
-   }
+    Vec4i l = lines[i];
+    line( cdst, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(0,0,255), 3, CV_AA);
+  }
  
   // Show your results
   namedWindow( "Hough Circle Transform Demo", CV_WINDOW_AUTOSIZE );
 
-  imshow( "Hough Circle Transform red", gray );
-   imshow( "Hough Circle Transform Demo", src );
+  imshow( "Hough Circle Transform red", destiny );
+   imshow( "Hough Circle Transform Demo", cdst );
   waitKey(0);
   return 0;
 }
-
-
 
 
 
@@ -96,3 +107,5 @@ int main()
 //   imshow( "clustered image", output );
 //   waitKey( 0 );
 // }
+
+//https://rosettacode.org/wiki/Example:Hough_transform/C
