@@ -12,28 +12,26 @@ using namespace cv;
 // Computes the x component of the gradient vector
 // at a given point in a image.
 // returns gradient in the x direction
-int xGradient(Mat image, int x, int y)
-{
-    return image.at<uchar>(y-1, x-1) +
-                2*image.at<uchar>(y, x-1) +
-                 image.at<uchar>(y+1, x-1) -
-                  image.at<uchar>(y-1, x+1) -
-                   2*image.at<uchar>(y, x+1) -
-                    image.at<uchar>(y+1, x+1);
+int xGradient(Mat image, int x, int y){
+	return 	image.at<uchar>(y-1, x-1) +
+			2*image.at<uchar>(y, x-1) +
+			image.at<uchar>(y+1, x-1) -
+			image.at<uchar>(y-1, x+1) -
+			2*image.at<uchar>(y, x+1) -
+			image.at<uchar>(y+1, x+1);
 }
  
 // Computes the y component of the gradient vector
 // at a given point in a image
 // returns gradient in the y direction
  
-int yGradient(Mat image, int x, int y)
-{
-    return image.at<uchar>(y-1, x-1) +
-                2*image.at<uchar>(y-1, x) +
-                 image.at<uchar>(y-1, x+1) -
-                  image.at<uchar>(y+1, x-1) -
-                   2*image.at<uchar>(y+1, x) -
-                    image.at<uchar>(y+1, x+1);
+int yGradient(Mat image, int x, int y){
+    return 	image.at<uchar>(y-1, x-1) +
+			2*image.at<uchar>(y-1, x) +
+			image.at<uchar>(y-1, x+1) -
+			image.at<uchar>(y+1, x-1) -
+			2*image.at<uchar>(y+1, x) -
+			image.at<uchar>(y+1, x+1);
 }
  
 int main(int argc, char** argv ){
@@ -68,9 +66,7 @@ int main(int argc, char** argv ){
 
 	namedWindow("initial");
 	imshow("initial", src);
- 
-      waitKey();
- 
- 
+
+    waitKey();
     return 0;
 }

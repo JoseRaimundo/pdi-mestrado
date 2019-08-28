@@ -10,3 +10,9 @@ $ sudo bash install.sh
 ```
 
 Para entender melhor o que este script faz, você também pode abir o arquivo install.sh e observar o que cada comando faz. O arquivo foi elaborado com base em [Milq](https://github.com/milq/milq/blob/master/scripts/bash/install-opencv.sh).
+
+
+### Referências
+
+
+ - [Sobel](https://www.programming-techniques.com/2013/03/sobel-and-prewitt-edge-detector-in-c-image-processing.html)
